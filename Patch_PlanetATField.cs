@@ -1,3 +1,4 @@
+using System;
 using HarmonyLib;
 using UnityEngine;
 
@@ -11,9 +12,6 @@ namespace PlanetwideShield
         /// <summary>两塔中心距离小于此值时视为“挨着”并启用全球护盾（与扫描日志中的“距离”同单位）。</summary>
         private const float AdjacentDistanceThreshold = 40f;
 
-        private static Vector4[]? _cachedVirtualPoints;
-        private static float _cachedRadius = -1f;
-
         [HarmonyPostfix]
         public static void Postfix(PlanetATField __instance)
         {
@@ -21,19 +19,22 @@ namespace PlanetwideShield
             if (__instance.defense.fieldGenerators.count < 2) return;
             if (!AreTwoGeneratorsWithinThreshold(__instance)) return;
 
-            var radius = __instance.planet.realRadius;
-            if (_cachedVirtualPoints == null || Mathf.Abs(_cachedRadius - radius) > 0.01f)
-            {
-                _cachedRadius = radius;
-                _cachedVirtualPoints = BuildVirtualPoints(radius, VirtualPointCount);
-            }
+            int count = __instance.generatorCount;
+            if (count <= 0) return;
 
-            var n = Mathf.Min(_cachedVirtualPoints!.Length, MaxGeneratorCount);
+            float maxW = 0f;
+            for (int i = 0; i < count; i++)
+                maxW = Math.Max(__instance.generatorMatrix[i].w, maxW);
+
+            var radius = __instance.planet.realRadius;
+            var points = BuildVirtualPoints(radius, VirtualPointCount, maxW);
+
+            var n = Mathf.Min(points.Length, MaxGeneratorCount);
             if (__instance.generatorMatrix == null || __instance.generatorMatrix.Length < n)
                 __instance.generatorMatrix = new Vector4[MaxGeneratorCount];
 
             for (var i = 0; i < n; i++)
-                __instance.generatorMatrix[i] = _cachedVirtualPoints[i];
+                __instance.generatorMatrix[i] = points[i];
             for (var i = n; i < MaxGeneratorCount; i++)
                 __instance.generatorMatrix[i] = default;
 
@@ -66,7 +67,7 @@ namespace PlanetwideShield
             return false;
         }
 
-        private static Vector4[] BuildVirtualPoints(float planetRadius, int count)
+        private static Vector4[] BuildVirtualPoints(float planetRadius, int count, float w)
         {
             var arr = new Vector4[count];
             for (var i = 0; i < count; i++)
@@ -78,7 +79,7 @@ namespace PlanetwideShield
                 var y = Mathf.Sin(inclination) * Mathf.Sin(azimuth);
                 var z = Mathf.Cos(inclination);
                 var pos = new Vector3(x, y, z) * planetRadius;
-                arr[i] = new Vector4(pos.x, pos.y, pos.z, 1f);
+                arr[i] = new Vector4(pos.x, pos.y, pos.z, w);
             }
             return arr;
         }
