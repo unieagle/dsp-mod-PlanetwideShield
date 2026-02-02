@@ -2,7 +2,6 @@ using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
 using HarmonyLib;
-using UnityEngine;
 
 namespace PlanetwideShield
 {
@@ -31,11 +30,7 @@ namespace PlanetwideShield
             var harmony = new Harmony(PluginInfo.PLUGIN_GUID);
             harmony.PatchAll(typeof(Plugin).Assembly);
 
-            var scannerGo = new GameObject("PlanetwideShield_Scanner");
-            DontDestroyOnLoad(scannerGo);
-            scannerGo.AddComponent<ShieldDistanceScanner>();
-
-            Log?.LogInfo($"[{PluginInfo.PLUGIN_NAME}] ✅ 加载完成！（每 10 秒扫描当前星球护盾距离并输出到日志）");
+            Log?.LogInfo($"[{PluginInfo.PLUGIN_NAME}] ✅ 加载完成！");
         }
     }
 }
