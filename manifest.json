@@ -1,0 +1,7 @@
+{
+    "name": "PlanetwideShield",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/unieagle/dsp-mod-PlanetwideShield",
+    "description": "When two shield towers are close enough on the same planet, the shield coverage of the planet will be changed to global.",
+    "dependencies": []
+}
