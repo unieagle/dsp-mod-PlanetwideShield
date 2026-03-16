@@ -1,6 +1,8 @@
 # PlanetwideShield 全球护盾
 
-《戴森球计划》BepInEx 模组：当同一星球上有**两座护盾塔彼此挨着**时，自动将该星球的护盾覆盖改为**全球**。
+《戴森球计划》BepInEx 模组：当同一星球上有**两座护盾塔彼此挨着**(能建造的最小距离)时，自动将该星球的护盾覆盖改为**全球**。
+
+When two shield towers are close enough on the same planet, the shield coverage of the planet will be changed to global.
 
 ## 依赖
 
